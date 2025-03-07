@@ -23,7 +23,7 @@ jobs:
       - name: Obtener última versión registrada en GitHub
         id: get_last_version
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
+          LAST_TAG=$(git tag --sort=-v:refname | head -n1 || echo "0.0.0")
           echo "LAST_TAG=$LAST_TAG" >> $GITHUB_ENV
           echo "Último tag encontrado en GitHub: $LAST_TAG"
 
@@ -63,6 +63,14 @@ jobs:
               ref: `refs/tags/v${newTag}`,
               sha: context.sha
             });
+            
+      - name: Crear un Release en GitHub con Draft Automático
+        uses: release-drafter/release-drafter@v5
+        if: env.SHOULD_TAG == 'true'
+        with:
+          tag_name: v${{ env.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Mostrar mensaje final
         run: |
