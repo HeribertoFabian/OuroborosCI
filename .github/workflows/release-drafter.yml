@@ -15,7 +15,6 @@ categories:
       - "docs"
       - "refactor"
 change-template: "- $TITLE by @$AUTHOR in #$NUMBER"
-change-title-escapes: "\<\>"
 template: |
   ## What's Changed
 
