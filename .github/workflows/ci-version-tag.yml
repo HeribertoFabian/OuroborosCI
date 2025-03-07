@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - develop
+      
+permissions:
+      contents: write
+      pull-requests: read      
 
 jobs:
   check-version:
@@ -68,7 +72,8 @@ jobs:
         uses: release-drafter/release-drafter@v5
         if: env.SHOULD_TAG == 'true'
         with:
-          tag_name: v${{ env.VERSION }}
+          version: v${{ env.VERSION }}
+          config-name: ./release-drafter.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
