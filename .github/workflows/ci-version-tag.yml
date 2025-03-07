@@ -11,11 +11,11 @@ jobs:
     steps:
       - name: Checkout código fuente
         uses: actions/checkout@v4
-
+        
       - name: Obtener versión actual del pom.xml
         id: get_version
         run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' || echo "0.0.0")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Versión detectada en pom.xml: $VERSION"
 
