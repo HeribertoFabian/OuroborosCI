@@ -15,4 +15,8 @@ public class App
 	public String dgetMessage(){
 		Return "Hola desde feature 2";
 	}
+	
+	public String getMessage3(){
+		Return "Este viene de la rama 3";
+	}
 }
