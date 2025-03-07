@@ -11,18 +11,19 @@ jobs:
     steps:
       - name: Checkout código fuente
         uses: actions/checkout@v4
-
+        
       - name: Obtener versión actual del pom.xml
         id: get_version
         run: |
-          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          cd mi-proyecto  #Asegurate de estar en la carpeta de tu proyecto
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' || echo "0.0.0")
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "Versión detectada en pom.xml: $VERSION"
 
       - name: Obtener última versión registrada en GitHub
         id: get_last_version
         run: |
-          LAST_TAG=$(git describe --tags --abbrev=0 || echo "0.0.0")
+          LAST_TAG=$(git tag --sort=-v:refname | head -n1 || echo "0.0.0")
           echo "LAST_TAG=$LAST_TAG" >> $GITHUB_ENV
           echo "Último tag encontrado en GitHub: $LAST_TAG"
 
@@ -51,7 +52,7 @@ jobs:
         if: env.SHOULD_TAG == 'true'
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.OUROBOROS_TOKEN }}
           script: |
             const newTag = process.env.VERSION;
             const owner = context.repo.owner;
@@ -62,6 +63,14 @@ jobs:
               ref: `refs/tags/v${newTag}`,
               sha: context.sha
             });
+            
+      - name: Crear un Release en GitHub con Draft Automático
+        uses: release-drafter/release-drafter@v5
+        if: env.SHOULD_TAG == 'true'
+        with:
+          tag_name: v${{ env.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Mostrar mensaje final
         run: |
