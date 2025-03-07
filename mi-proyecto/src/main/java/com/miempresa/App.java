@@ -11,6 +11,7 @@ public class App
         System.out.println( "Hello World!" );
 		System.out.println( "Hello World! desde rama 1" );
 		System.out.println( "Hello World! desde rama 4" );
+		System.out.println("Funcionalidad activada: " + getStatus)
     }
 	
 	public String dgetMessage(){
@@ -19,5 +20,9 @@ public class App
 	
 	public String getMessage3(){
 		Return "Este viene de la rama 3";
+	}
+	
+	public static int getStatus(){
+		return 1;
 	}
 }
